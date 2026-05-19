@@ -1,7 +1,9 @@
 import SwiftUI
+import UIKit
 
 struct ArmyListView: View {
     @StateObject var viewModel: ArmyListViewModel
+    private let listBackground = Color(red: 0.27, green: 0.06, blue: 0.09)
 
     var body: some View {
         NavigationStack {
@@ -13,14 +15,46 @@ struct ArmyListView: View {
                 } else {
                     List(viewModel.filteredArmies) { army in
                         NavigationLink {
-                            ArmyDetailView(army: army)
+                            ArmyDetailView(army: army, viewModel: viewModel)
                         } label: {
-                            ArmyRowView(army: army)
+                            ArmyRowView(
+                                army: army,
+                                isFavorite: viewModel.isFavorite(army),
+                                isOwned: viewModel.isOwned(army)
+                            )
+                        }
+                        .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
+                        .listRowSeparator(.hidden)
+                        .listRowBackground(Color.clear)
+                        .swipeActions(edge: .leading, allowsFullSwipe: true) {
+                            Button {
+                                viewModel.toggleFavorite(for: army)
+                            } label: {
+                                Label(
+                                    viewModel.isFavorite(army) ? "Unpin" : "Pin",
+                                    systemImage: viewModel.isFavorite(army) ? "pin.slash.fill" : "pin.fill"
+                                )
+                            }
+                            .tint(.orange)
+                        }
+                        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                            Button {
+                                viewModel.toggleOwned(for: army)
+                            } label: {
+                                Label(
+                                    viewModel.isOwned(army) ? "Unmark Owned" : "Mark Owned",
+                                    systemImage: viewModel.isOwned(army) ? "checkmark.circle.fill" : "checkmark.circle"
+                                )
+                            }
+                            .tint(.green)
                         }
                     }
                     .listStyle(.plain)
+                    .scrollContentBackground(.hidden)
+                    .background(listBackground)
                 }
             }
+            .background(listBackground.ignoresSafeArea())
             .navigationTitle("Warhammer")
             .searchable(text: $viewModel.searchText, prompt: "Buscar facción o spearhead")
             .task {
@@ -31,11 +65,17 @@ struct ArmyListView: View {
             }
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    if !viewModel.armies.isEmpty {
-                        Text("\(viewModel.filteredArmies.count)")
-                            .font(.subheadline.weight(.semibold))
-                            .foregroundStyle(.secondary)
+                    Button {
+                        viewModel.showFavoritesOnly.toggle()
+                    } label: {
+                        Image(systemName: viewModel.showFavoritesOnly ? "pin.fill" : "pin")
                     }
+                }
+
+                ToolbarItem(placement: .topBarTrailing) {
+                    Text("\(viewModel.filteredArmies.count)")
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(.secondary)
                 }
             }
         }
@@ -44,34 +84,44 @@ struct ArmyListView: View {
 
 private struct ArmyRowView: View {
     let army: Army
+    let isFavorite: Bool
+    let isOwned: Bool
+    private let cardBackground = Color(red: 0.10, green: 0.17, blue: 0.29)
 
     var body: some View {
-        HStack(spacing: 12) {
-            AsyncImage(url: army.imageURL) { phase in
-                switch phase {
-                case .empty:
-                    placeholder
-                case .success(let image):
-                    image
-                        .resizable()
-                        .scaledToFill()
-                case .failure:
-                    placeholder
-                @unknown default:
-                    placeholder
-                }
+        VStack(alignment: .leading, spacing: 14) {
+            ArmyThumbnailView(army: army) {
+                placeholder
             }
-            .frame(width: 72, height: 72)
-            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+            .frame(maxWidth: .infinity)
+            .frame(height: 156)
 
-            VStack(alignment: .leading, spacing: 6) {
-                Text(army.spearheadName)
-                    .font(.headline)
-                    .foregroundStyle(.primary)
+            VStack(alignment: .leading, spacing: 8) {
+                HStack(spacing: 8) {
+                    Text(army.spearheadName)
+                        .font(.headline.weight(.semibold))
+                        .foregroundStyle(.white)
+                        .lineLimit(2)
+
+                    Spacer(minLength: 8)
+
+                    if isFavorite {
+                        Image(systemName: "pin.fill")
+                            .font(.caption)
+                            .foregroundStyle(.orange)
+                    }
+
+                    if isOwned {
+                        Image(systemName: "checkmark.circle.fill")
+                            .font(.caption)
+                            .foregroundStyle(.green)
+                    }
+                }
 
                 Text(army.faction)
                     .font(.subheadline)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(.white.opacity(0.78))
+                    .lineLimit(1)
 
                 HStack(spacing: 8) {
                     TagLabel(title: army.grandAlliance)
@@ -79,10 +129,23 @@ private struct ArmyRowView: View {
                     if let points = army.pointsValue {
                         TagLabel(title: "\(points) pts")
                     }
+
+                    if isOwned {
+                        TagLabel(title: "Owned")
+                    }
                 }
             }
+            .padding(.horizontal, 16)
+            .padding(.bottom, 16)
         }
-        .padding(.vertical, 6)
+        .frame(maxWidth: .infinity)
+        .background(cardBackground)
+        .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+        .shadow(color: .black.opacity(0.18), radius: 16, x: 0, y: 8)
+        .overlay {
+            RoundedRectangle(cornerRadius: 24, style: .continuous)
+                .stroke(Color.white.opacity(0.12), lineWidth: 1)
+        }
     }
 
     private var placeholder: some View {
@@ -97,91 +160,160 @@ private struct ArmyRowView: View {
 
 private struct ArmyDetailView: View {
     let army: Army
+    @ObservedObject var viewModel: ArmyListViewModel
+    @State private var quickRulesPreviewImage: UIImage?
+    private let detailBackground = Color(red: 0.27, green: 0.06, blue: 0.09)
+    private let sectionBackground = Color(red: 0.10, green: 0.17, blue: 0.29)
 
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 20) {
-                AsyncImage(url: army.imageURL) { phase in
-                    switch phase {
-                    case .empty:
-                        detailPlaceholder
-                    case .success(let image):
-                        image
-                            .resizable()
-                            .scaledToFit()
-                    case .failure:
-                        detailPlaceholder
-                    @unknown default:
+        GeometryReader { geometry in
+            ScrollView {
+                VStack(alignment: .leading, spacing: 20) {
+                    ArmyHeroImageView(army: army) {
                         detailPlaceholder
                     }
+                    .frame(width: geometry.size.width - 32)
+                    .frame(height: 220)
+                    .overlay(alignment: .bottomLeading) {
+                        LinearGradient(
+                            colors: [.clear, .black.opacity(0.45)],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                        .allowsHitTesting(false)
+                    }
+                    .clipShape(RoundedRectangle(cornerRadius: 0, style: .continuous))
+
+                    DetailSection(background: sectionBackground) {
+                        VStack(alignment: .leading, spacing: 10) {
+                            HStack(alignment: .top) {
+                                Text(army.spearheadName)
+                                    .font(.largeTitle.bold())
+
+                                Spacer(minLength: 12)
+
+                                Button {
+                                    viewModel.toggleFavorite(for: army)
+                                } label: {
+                                    Image(systemName: viewModel.isFavorite(army) ? "pin.fill" : "pin")
+                                        .font(.title3.weight(.semibold))
+                                        .foregroundStyle(viewModel.isFavorite(army) ? .orange : .white.opacity(0.8))
+                                        .padding(10)
+                                        .background(Color.white.opacity(0.12))
+                                        .clipShape(Circle())
+                                }
+                                .buttonStyle(.plain)
+                            }
+                            .foregroundStyle(.white)
+
+                            Button {
+                                viewModel.toggleOwned(for: army)
+                            } label: {
+                                Label(viewModel.isOwned(army) ? "Owned" : "Mark Owned", systemImage: viewModel.isOwned(army) ? "checkmark.circle.fill" : "checkmark.circle")
+                                    .font(.subheadline.weight(.semibold))
+                                    .foregroundStyle(viewModel.isOwned(army) ? .green : .white.opacity(0.8))
+                                    .padding(.horizontal, 12)
+                                    .padding(.vertical, 8)
+                                    .background(Color.white.opacity(0.12))
+                                    .clipShape(Capsule())
+                            }
+                            .buttonStyle(.plain)
+
+                            Text(army.faction)
+                                .font(.title3)
+                                .foregroundStyle(.white.opacity(0.78))
+
+                            HStack(spacing: 8) {
+                                TagLabel(title: army.grandAlliance)
+
+                                if let points = army.pointsValue {
+                                    TagLabel(title: "\(points) pts")
+                                }
+
+                                if let modelCount = army.modelCount {
+                                    TagLabel(title: "\(modelCount) models")
+                                }
+                            }
+                        }
+                    }
+
+                    DetailSection(title: "Rules", background: sectionBackground) {
+                        ArmyRulesTextView(details: army.details)
+                    }
+
+                    if let officialPDFURL = army.officialPDFURL {
+                        DetailSection(title: "Official PDF", background: sectionBackground) {
+                            HStack(spacing: 12) {
+                                Link(destination: officialPDFURL) {
+                                    Label("Open PDF", systemImage: "arrow.down.doc")
+                                        .font(.subheadline.weight(.semibold))
+                                        .foregroundStyle(.white)
+                                        .frame(maxWidth: .infinity)
+                                        .padding(.horizontal, 12)
+                                        .padding(.vertical, 12)
+                                        .background(Color.white.opacity(0.08))
+                                        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                                }
+                                .buttonStyle(.plain)
+
+                                ShareLink(item: officialPDFURL) {
+                                    Label("Share", systemImage: "square.and.arrow.up")
+                                        .font(.subheadline.weight(.semibold))
+                                        .foregroundStyle(.white)
+                                        .frame(maxWidth: .infinity)
+                                        .padding(.horizontal, 12)
+                                        .padding(.vertical, 12)
+                                        .background(Color.white.opacity(0.08))
+                                        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                                }
+                                .buttonStyle(.plain)
+                            }
+                        }
+                    }
+
+                    DetailSection(title: "Quick Rules", background: sectionBackground) {
+                        if let image = loadBundledImage(from: army.bundledQuickRulesURL) {
+                            Button {
+                                quickRulesPreviewImage = image
+                            } label: {
+                                VStack(alignment: .leading, spacing: 8) {
+                                    Image(uiImage: image)
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(maxWidth: .infinity)
+                                        .background(Color.white.opacity(0.08))
+                                        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+
+                                    Label("Tap para hacer zoom", systemImage: "magnifyingglass")
+                                        .font(.caption.weight(.medium))
+                                        .foregroundStyle(.white.opacity(0.72))
+                                }
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                            }
+                            .buttonStyle(.plain)
+                        } else {
+                            Text(army.quickRulesFileName ?? "No hay imagen local de Quick Rules para este ejército todavía.")
+                                .font(.callout)
+                                .foregroundStyle(.white.opacity(0.78))
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(16)
+                                .background(Color.white.opacity(0.08))
+                                .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                        }
+                    }
                 }
+                .padding(.vertical, 16)
+                .frame(width: geometry.size.width - 32, alignment: .leading)
                 .frame(maxWidth: .infinity)
-                .frame(height: 220)
-                .background(Color(.secondarySystemBackground))
-                .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
-
-                VStack(alignment: .leading, spacing: 10) {
-                    Text(army.spearheadName)
-                        .font(.largeTitle.bold())
-
-                    Text(army.faction)
-                        .font(.title3)
-                        .foregroundStyle(.secondary)
-
-                    HStack(spacing: 8) {
-                        TagLabel(title: army.grandAlliance)
-
-                        if let points = army.pointsValue {
-                            TagLabel(title: "\(points) pts")
-                        }
-
-                        if let modelCount = army.modelCount {
-                            TagLabel(title: "\(modelCount) models")
-                        }
-                    }
-                }
-
-                VStack(alignment: .leading, spacing: 12) {
-                    Text("Rules")
-                        .font(.title3.bold())
-
-                    Text(army.details)
-                        .font(.body)
-                        .textSelection(.enabled)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(16)
-                        .background(Color(.secondarySystemBackground))
-                        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-                }
-
-                VStack(alignment: .leading, spacing: 12) {
-                    Text("Quick Rules")
-                        .font(.title3.bold())
-
-                    Text(army.quickRulesFileName ?? "La hoja pública expone el nombre del archivo, pero no una URL pública directa de la imagen.")
-                        .font(.callout)
-                        .foregroundStyle(.secondary)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(16)
-                        .background(Color(.tertiarySystemBackground))
-                        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-                }
-
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("Estado")
-                        .font(.title3.bold())
-
-                    HStack(spacing: 8) {
-                        StatusLabel(title: "Released", isOn: army.released)
-                        StatusLabel(title: "In Print", isOn: army.inPrint)
-                        StatusLabel(title: "Owned", isOn: army.owned)
-                    }
-                }
             }
-            .padding(20)
+            .background(detailBackground)
+            .frame(maxWidth: .infinity)
+            .scrollIndicators(.hidden)
         }
+        .background(detailBackground.ignoresSafeArea())
         .navigationTitle(army.faction)
         .navigationBarTitleDisplayMode(.inline)
+        .fullScreenCover(item: $quickRulesPreviewImage, content: QuickRulesZoomView.init)
     }
 
     private var detailPlaceholder: some View {
@@ -194,50 +326,227 @@ private struct ArmyDetailView: View {
     }
 }
 
+private struct QuickRulesZoomView: View {
+    let image: UIImage
+    @Environment(\.dismiss) private var dismiss
+    @State private var scale: CGFloat = 1
+    @State private var lastScale: CGFloat = 1
+    @State private var offset: CGSize = .zero
+    @State private var lastOffset: CGSize = .zero
+
+    var body: some View {
+        NavigationStack {
+            GeometryReader { geometry in
+                Image(uiImage: image)
+                    .resizable()
+                    .scaledToFit()
+                    .scaleEffect(scale)
+                    .offset(offset)
+                    .frame(width: geometry.size.width, height: geometry.size.height)
+                    .background(Color.black)
+                    .gesture(
+                        SimultaneousGesture(
+                            MagnificationGesture()
+                                .onChanged { value in
+                                    scale = min(max(lastScale * value, 1), 6)
+                                }
+                                .onEnded { _ in
+                                    lastScale = scale
+                                    if scale == 1 {
+                                        offset = .zero
+                                        lastOffset = .zero
+                                    }
+                                },
+                            DragGesture()
+                                .onChanged { value in
+                                    guard scale > 1 else { return }
+                                    offset = CGSize(
+                                        width: lastOffset.width + value.translation.width,
+                                        height: lastOffset.height + value.translation.height
+                                    )
+                                }
+                                .onEnded { _ in
+                                    lastOffset = offset
+                                }
+                        )
+                    )
+                    .onTapGesture(count: 2) {
+                        if scale > 1 {
+                            scale = 1
+                            lastScale = 1
+                            offset = .zero
+                            lastOffset = .zero
+                        } else {
+                            scale = 2
+                            lastScale = 2
+                        }
+                    }
+            }
+            .ignoresSafeArea()
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button("Close") {
+                        dismiss()
+                    }
+                }
+            }
+            .toolbarBackground(.black, for: .navigationBar)
+            .toolbarColorScheme(.dark, for: .navigationBar)
+            .background(Color.black)
+        }
+    }
+}
+
+private struct ArmyThumbnailView<Placeholder: View>: View {
+    let army: Army
+    @ViewBuilder let placeholder: () -> Placeholder
+
+    var body: some View {
+        if let image = loadBundledImage(from: army.bundledThumbnailURL) {
+            Image(uiImage: image)
+                .resizable()
+                .scaledToFit()
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        } else if let imageURL = army.imageURL {
+            AsyncImage(url: imageURL) { phase in
+                switch phase {
+                case .empty:
+                    placeholder()
+                case .success(let image):
+                    image
+                        .resizable()
+                        .scaledToFit()
+                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                case .failure:
+                    placeholder()
+                @unknown default:
+                    placeholder()
+                }
+            }
+        } else {
+            placeholder()
+        }
+    }
+}
+
+private struct ArmyHeroImageView<Placeholder: View>: View {
+    let army: Army
+    @ViewBuilder let placeholder: () -> Placeholder
+
+    var body: some View {
+        if let image = loadBundledImage(from: army.bundledThumbnailURL) {
+            Image(uiImage: image)
+                .resizable()
+                .scaledToFit()
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        } else if let imageURL = army.imageURL {
+            AsyncImage(url: imageURL) { phase in
+                switch phase {
+                case .empty:
+                    placeholder()
+                case .success(let image):
+                    image
+                        .resizable()
+                        .scaledToFit()
+                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                case .failure:
+                    placeholder()
+                @unknown default:
+                    placeholder()
+                }
+            }
+        } else {
+            placeholder()
+        }
+    }
+}
+
 private struct TagLabel: View {
     let title: String
 
     var body: some View {
         Text(title)
             .font(.caption.weight(.semibold))
+            .foregroundStyle(.white)
             .padding(.horizontal, 10)
             .padding(.vertical, 6)
-            .background(Color(.tertiarySystemBackground))
+            .background(Color.white.opacity(0.14))
             .clipShape(Capsule())
     }
 }
 
-private struct StatusLabel: View {
-    let title: String
-    let isOn: Bool
+private struct DetailSection<Content: View>: View {
+    let title: String?
+    let background: Color
+    @ViewBuilder let content: () -> Content
+
+    init(title: String? = nil, background: Color, @ViewBuilder content: @escaping () -> Content) {
+        self.title = title
+        self.background = background
+        self.content = content
+    }
 
     var body: some View {
-        Label(title, systemImage: isOn ? "checkmark.circle.fill" : "xmark.circle")
-            .font(.subheadline.weight(.medium))
-            .foregroundStyle(isOn ? .green : .secondary)
+        VStack(alignment: .leading, spacing: 12) {
+            if let title {
+                Text(title)
+                    .font(.title3.bold())
+                    .foregroundStyle(.white)
+            }
+
+            content()
+        }
+        .padding(.horizontal, 20)
+        .padding(.vertical, 16)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(background)
+        .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+        .shadow(color: .black.opacity(0.16), radius: 14, x: 0, y: 8)
     }
 }
 
-#Preview {
-    ArmyListView(viewModel: ArmyListViewModel(repository: PreviewArmyRepository()))
+private struct ArmyRulesTextView: View {
+    let details: String
+
+    private var lines: [String] {
+        details
+            .components(separatedBy: .newlines)
+            .map { $0.trimmingCharacters(in: .whitespaces) }
+            .filter { !$0.isEmpty }
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            ForEach(Array(lines.enumerated()), id: \.offset) { _, line in
+                if line.uppercased() == "GENERAL" || line.uppercased() == "UNITS" {
+                    Text(line.uppercased())
+                        .font(.headline.weight(.bold))
+                        .foregroundStyle(.white)
+                        .underline()
+                        .padding(.top, 4)
+                } else {
+                    Text(line)
+                        .font(.body)
+                        .foregroundStyle(.white.opacity(0.92))
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .textSelection(.enabled)
+                }
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
 }
 
-private struct PreviewArmyRepository: ArmyRepositoryProtocol {
-    func fetchArmies() async throws -> [Army] {
-        [
-            Army(
-                faction: "Stormcast Eternals",
-                spearheadName: "Vigilant Brotherhood",
-                grandAlliance: "Order",
-                modelCount: 11,
-                pointsValue: 490,
-                released: true,
-                inPrint: true,
-                owned: true,
-                details: "GENERAL\n1x Lord-Vigilant on Gryph-stalker\n\nUNITS\n1x Lord-Veritant\n3x Prosecutors\n5x Liberators",
-                quickRulesFileName: "Stormcast - Vigilant Brotherhood.png",
-                imageURL: nil
-            )
-        ]
+private func loadBundledImage(from url: URL?) -> UIImage? {
+    guard let url, let data = try? Data(contentsOf: url) else {
+        return nil
+    }
+
+    return UIImage(data: data)
+}
+
+extension UIImage: @retroactive Identifiable {
+    public var id: ObjectIdentifier {
+        ObjectIdentifier(self)
     }
 }

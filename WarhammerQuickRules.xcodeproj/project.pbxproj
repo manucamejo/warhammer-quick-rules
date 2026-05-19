@@ -1,5 +1,8 @@
 // !$*UTF8*$!
 {
+	archiveVersion = 1;
+	classes = {
+	};
 	objectVersion = 56;
 	objects = {
 
@@ -9,8 +12,12 @@
 		A00000000000000000000003 /* Army.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000013 /* Army.swift */; };
 		A00000000000000000000004 /* ArmyRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000014 /* ArmyRepository.swift */; };
 		A00000000000000000000005 /* ArmyListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000015 /* ArmyListViewModel.swift */; };
+		A00000000000000000000032 /* MatchModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000033 /* MatchModels.swift */; };
+		A00000000000000000000034 /* MatchCenterViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000035 /* MatchCenterViewModel.swift */; };
+		A00000000000000000000036 /* MatchCenterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000037 /* MatchCenterView.swift */; };
 		A00000000000000000000006 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000016 /* Assets.xcassets */; };
 		A00000000000000000000007 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000017 /* Preview Assets.xcassets */; };
+		A00000000000000000000030 /* OfflineData in Resources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000031 /* OfflineData */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -20,8 +27,12 @@
 		A00000000000000000000013 /* Army.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Army.swift; sourceTree = "<group>"; };
 		A00000000000000000000014 /* ArmyRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArmyRepository.swift; sourceTree = "<group>"; };
 		A00000000000000000000015 /* ArmyListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArmyListViewModel.swift; sourceTree = "<group>"; };
+		A00000000000000000000033 /* MatchModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchModels.swift; sourceTree = "<group>"; };
+		A00000000000000000000035 /* MatchCenterViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchCenterViewModel.swift; sourceTree = "<group>"; };
+		A00000000000000000000037 /* MatchCenterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchCenterView.swift; sourceTree = "<group>"; };
 		A00000000000000000000016 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A00000000000000000000017 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		A00000000000000000000031 /* OfflineData */ = {isa = PBXFileReference; lastKnownFileType = folder; path = OfflineData; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -59,7 +70,11 @@
 				A00000000000000000000013 /* Army.swift */,
 				A00000000000000000000014 /* ArmyRepository.swift */,
 				A00000000000000000000015 /* ArmyListViewModel.swift */,
+				A00000000000000000000033 /* MatchModels.swift */,
+				A00000000000000000000035 /* MatchCenterViewModel.swift */,
+				A00000000000000000000037 /* MatchCenterView.swift */,
 				A00000000000000000000016 /* Assets.xcassets */,
+				A00000000000000000000031 /* OfflineData */,
 				A00000000000000000000017 /* Preview Assets.xcassets */,
 			);
 			path = WarhammerQuickRules;
@@ -125,6 +140,7 @@
 			files = (
 				A00000000000000000000006 /* Assets.xcassets in Resources */,
 				A00000000000000000000007 /* Preview Assets.xcassets in Resources */,
+				A00000000000000000000030 /* OfflineData in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -140,6 +156,9 @@
 				A00000000000000000000003 /* Army.swift in Sources */,
 				A00000000000000000000004 /* ArmyRepository.swift in Sources */,
 				A00000000000000000000005 /* ArmyListViewModel.swift in Sources */,
+				A00000000000000000000032 /* MatchModels.swift in Sources */,
+				A00000000000000000000034 /* MatchCenterViewModel.swift in Sources */,
+				A00000000000000000000036 /* MatchCenterView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -203,14 +222,14 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = L4X3HT4G2Q;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "Warhammer Quick Rules";
 				INFOPLIST_KEY_LSRequiresIPhoneOS = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -232,14 +251,14 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = L4X3HT4G2Q;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "Warhammer Quick Rules";
 				INFOPLIST_KEY_LSRequiresIPhoneOS = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
