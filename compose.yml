@@ -3,6 +3,8 @@ services:
     build:
       context: ./web
       dockerfile: Dockerfile
+      args:
+        VITE_APP_VERSION: ${VITE_APP_VERSION:-dev}
     image: warhammer-web:latest
     container_name: warhammer-web
     restart: unless-stopped

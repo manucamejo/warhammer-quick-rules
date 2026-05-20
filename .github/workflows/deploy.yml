@@ -26,8 +26,11 @@ jobs:
           ssh-keyscan -H "${{ secrets.SSH_HOST }}" >> ~/.ssh/known_hosts
 
       - name: Deploy
+        env:
+          GIT_SHA: ${{ github.sha }}
         run: |
-          ssh root@${{ secrets.SSH_HOST }} bash <<'EOF'
+          SHORT_SHA="${GIT_SHA:0:7}"
+          ssh root@${{ secrets.SSH_HOST }} VITE_APP_VERSION="$SHORT_SHA" bash <<'EOF'
           set -euo pipefail
           cd /opt/warhammer
           git fetch --all --prune
