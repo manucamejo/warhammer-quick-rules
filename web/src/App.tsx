@@ -1,5 +1,4 @@
 import { BrowserRouter, NavLink, Navigate, Route, Routes } from 'react-router-dom'
-import { VersionBadge } from './components/VersionBadge'
 import { ArmiesPage } from './pages/ArmiesPage'
 import { MatchesPage } from './pages/MatchesPage'
 
@@ -14,7 +13,6 @@ export default function App() {
             <Route path="/matches" element={<MatchesPage />} />
           </Routes>
         </main>
-        <VersionBadge />
         <TabBar />
       </div>
     </BrowserRouter>

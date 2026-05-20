@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { AppVersion } from '../components/AppVersion'
 import { ArmyCard } from '../components/ArmyCard'
 import { PinFilledIcon, PinIcon, SearchIcon } from '../components/Icons'
 import { useArmiesStore, useFilteredArmies } from '../store/armies'
@@ -28,29 +29,34 @@ export function ArmiesPage() {
 
   return (
     <div className="mx-auto max-w-2xl px-4 pt-4">
-      <header className="mb-4 flex items-center justify-between gap-3">
-        <h1 className="text-2xl font-semibold tracking-tight">Warhammer</h1>
-        <div className="flex items-center gap-2">
-          <span className="text-sm font-semibold text-white/65">
-            {armies.length}
-          </span>
-          <button
-            type="button"
-            onClick={toggleShowFavoritesOnly}
-            aria-pressed={showFavoritesOnly}
-            aria-label="Mostrar solo favoritos"
-            className={`rounded-full p-2 transition-colors ${
-              showFavoritesOnly
-                ? 'bg-amber-500/20 text-amber-300'
-                : 'bg-white/8 text-white/70 hover:bg-white/12'
-            }`}
-          >
-            {showFavoritesOnly ? (
-              <PinFilledIcon size={18} />
-            ) : (
-              <PinIcon size={18} />
-            )}
-          </button>
+      <header className="mb-4">
+        <div className="flex items-center justify-between gap-3">
+          <h1 className="text-2xl font-semibold tracking-tight">Warhammer</h1>
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-semibold text-white/65">
+              {armies.length}
+            </span>
+            <button
+              type="button"
+              onClick={toggleShowFavoritesOnly}
+              aria-pressed={showFavoritesOnly}
+              aria-label="Mostrar solo favoritos"
+              className={`rounded-full p-2 transition-colors ${
+                showFavoritesOnly
+                  ? 'bg-amber-500/20 text-amber-300'
+                  : 'bg-white/8 text-white/70 hover:bg-white/12'
+              }`}
+            >
+              {showFavoritesOnly ? (
+                <PinFilledIcon size={18} />
+              ) : (
+                <PinIcon size={18} />
+              )}
+            </button>
+          </div>
+        </div>
+        <div className="mt-0.5">
+          <AppVersion />
         </div>
       </header>
 

@@ -2,10 +2,4 @@
 /// <reference types="vite-plugin-pwa/react" />
 /// <reference types="vite-plugin-pwa/client" />
 
-interface ImportMetaEnv {
-  readonly VITE_APP_VERSION?: string
-}
-
-interface ImportMeta {
-  readonly env: ImportMetaEnv
-}
+declare const __APP_VERSION__: string
