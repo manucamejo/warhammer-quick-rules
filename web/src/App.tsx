@@ -1,5 +1,6 @@
 import { BrowserRouter, NavLink, Navigate, Route, Routes } from 'react-router-dom'
 import { ArmiesPage } from './pages/ArmiesPage'
+import { ArmyDetailPage } from './pages/ArmyDetailPage'
 import { MatchesPage } from './pages/MatchesPage'
 
 export default function App() {
@@ -10,6 +11,7 @@ export default function App() {
           <Routes>
             <Route path="/" element={<Navigate to="/armies" replace />} />
             <Route path="/armies" element={<ArmiesPage />} />
+            <Route path="/armies/:id" element={<ArmyDetailPage />} />
             <Route path="/matches" element={<MatchesPage />} />
           </Routes>
         </main>
