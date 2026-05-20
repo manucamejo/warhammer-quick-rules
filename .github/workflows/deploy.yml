@@ -1,0 +1,37 @@
+name: Deploy PWA
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'web/**'
+      - 'compose.yml'
+      - '.github/workflows/deploy.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-main
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H "${{ secrets.SSH_HOST }}" >> ~/.ssh/known_hosts
+
+      - name: Deploy
+        run: |
+          ssh root@${{ secrets.SSH_HOST }} bash <<'EOF'
+          set -euo pipefail
+          cd /opt/warhammer
+          git fetch --all --prune
+          git reset --hard origin/main
+          docker compose up -d --build
+          docker image prune -f
+          EOF
