@@ -24,5 +24,9 @@ export function useAppUpdate() {
     return () => document.removeEventListener('visibilitychange', onVisibility)
   }, [])
 
+  useEffect(() => {
+    if (needsRefresh) applyUpdate()
+  }, [needsRefresh])
+
   return { needsRefresh, applyUpdate }
 }

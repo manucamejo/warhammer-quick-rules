@@ -13,7 +13,7 @@ body,
 #root {
   height: 100%;
   margin: 0;
-  background-color: var(--color-burgundy);
+  background-color: var(--color-navy-card);
   color: white;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
