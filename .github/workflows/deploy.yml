@@ -32,6 +32,11 @@ jobs:
           cd /opt/warhammer
           git fetch --all --prune
           git reset --hard origin/main
+          MAJOR_MINOR=$(node -p "require('./web/package.json').version.split('.').slice(0,2).join('.')")
+          COUNT=$(git rev-list --count HEAD)
+          SHA=$(git rev-parse --short HEAD)
+          export APP_VERSION="${MAJOR_MINOR}.${COUNT}+${SHA}"
+          echo "Building with APP_VERSION=${APP_VERSION}"
           docker compose up -d --build
           docker image prune -f
           EOF

@@ -5,6 +5,9 @@ COPY package.json package-lock.json ./
 RUN npm ci
 
 COPY . .
+
+ARG APP_VERSION
+ENV APP_VERSION=${APP_VERSION}
 RUN npm run build
 
 FROM nginx:alpine AS runtime

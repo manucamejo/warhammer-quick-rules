@@ -1,5 +1,4 @@
 import { useEffect } from 'react'
-import { AppVersion } from '../components/AppVersion'
 import { ArmyCard } from '../components/ArmyCard'
 import { PinFilledIcon, PinIcon, SearchIcon } from '../components/Icons'
 import { useArmiesStore, useFilteredArmies } from '../store/armies'
@@ -57,9 +56,6 @@ export function ArmiesPage() {
               )}
             </button>
           </div>
-        </div>
-        <div className="mt-0.5">
-          <AppVersion />
         </div>
       </header>
 

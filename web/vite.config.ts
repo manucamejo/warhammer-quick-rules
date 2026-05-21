@@ -2,6 +2,7 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import { VitePWA } from 'vite-plugin-pwa'
+import { execSync } from 'node:child_process'
 import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 
@@ -9,9 +10,29 @@ const pkg = JSON.parse(
   readFileSync(fileURLToPath(new URL('./package.json', import.meta.url)), 'utf-8')
 ) as { version: string }
 
+function resolveVersion(): string {
+  if (process.env.APP_VERSION) return process.env.APP_VERSION
+  const [major, minor] = pkg.version.split('.')
+  try {
+    const count = execSync('git rev-list --count HEAD', {
+      encoding: 'utf-8',
+      stdio: ['ignore', 'pipe', 'ignore'],
+    }).trim()
+    const sha = execSync('git rev-parse --short HEAD', {
+      encoding: 'utf-8',
+      stdio: ['ignore', 'pipe', 'ignore'],
+    }).trim()
+    return `${major}.${minor}.${count}+${sha}`
+  } catch {
+    return pkg.version
+  }
+}
+
+const APP_VERSION = resolveVersion()
+
 export default defineConfig({
   define: {
-    __APP_VERSION__: JSON.stringify(pkg.version),
+    __APP_VERSION__: JSON.stringify(APP_VERSION),
   },
   plugins: [
     react(),
