@@ -1,5 +1,4 @@
 import { BrowserRouter, NavLink, Navigate, Route, Routes } from 'react-router-dom'
-import { AppVersion } from './components/AppVersion'
 import { ArmiesPage } from './pages/ArmiesPage'
 import { ArmyDetailPage } from './pages/ArmyDetailPage'
 import { MatchesPage } from './pages/MatchesPage'
@@ -28,19 +27,14 @@ export default function App() {
 function TabBar() {
   return (
     <nav
-      className="fixed inset-x-0 bottom-0 z-10 flex flex-col border-t border-white/10 bg-[#0f1d36]"
-      style={{ height: 'calc(4rem + env(safe-area-inset-bottom))' }}
+      className="fixed inset-x-0 bottom-0 z-10 flex items-stretch border-t border-white/10 bg-[#0f1d36]"
+      style={{
+        height: 'calc(4rem + env(safe-area-inset-bottom))',
+        paddingBottom: 'max(env(safe-area-inset-bottom) - 1.25rem, 0.25rem)',
+      }}
     >
-      <div className="flex h-16 shrink-0 items-stretch">
-        <TabLink to="/armies" label="Armies" />
-        <TabLink to="/matches" label="Matches" />
-      </div>
-      <div
-        className="flex flex-1 items-start justify-center"
-        style={{ paddingTop: '2px' }}
-      >
-        <AppVersion />
-      </div>
+      <TabLink to="/armies" label="Armies" />
+      <TabLink to="/matches" label="Matches" />
     </nav>
   )
 }
