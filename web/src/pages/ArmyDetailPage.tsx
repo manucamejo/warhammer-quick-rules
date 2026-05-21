@@ -72,26 +72,31 @@ export function ArmyDetailPage() {
 
   return (
     <div className="mx-auto max-w-2xl pb-4">
-      <div className="relative h-72 w-full overflow-hidden bg-gradient-to-br from-red-900/60 to-orange-700/40">
-        {heroSrc && (
-          <img
-            src={heroSrc}
-            alt={army.spearheadName}
-            className="h-full w-full object-cover object-top"
-          />
-        )}
-        <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-[#451017] via-[#451017]/60 to-transparent" />
+      <div
+        className="relative w-full bg-gradient-to-br from-red-900/60 to-orange-700/40"
+        style={{ paddingTop: 'env(safe-area-inset-top)' }}
+      >
+        <div className="relative aspect-[1000/428] w-full overflow-hidden">
+          {heroSrc && (
+            <img
+              src={heroSrc}
+              alt={army.spearheadName}
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+          )}
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-[#451017] to-transparent" />
+        </div>
         <Link
           to="/armies"
           aria-label="Volver"
-          className="absolute left-3 top-3 flex h-10 w-10 items-center justify-center rounded-full bg-black/45 text-white backdrop-blur"
-          style={{ marginTop: 'env(safe-area-inset-top)' }}
+          className="absolute left-3 flex h-10 w-10 items-center justify-center rounded-full bg-black/45 text-white backdrop-blur"
+          style={{ top: 'calc(env(safe-area-inset-top) + 0.75rem)' }}
         >
           <ChevronLeftIcon size={22} />
         </Link>
       </div>
 
-      <div className="-mt-10 space-y-4 px-4">
+      <div className="mt-4 space-y-4 px-4">
         <section className="rounded-3xl border border-white/10 bg-[#1a2b4a] p-5 shadow-lg shadow-black/30">
           <div className="flex items-start justify-between gap-3">
             <h1 className="text-2xl font-bold leading-tight text-white">
