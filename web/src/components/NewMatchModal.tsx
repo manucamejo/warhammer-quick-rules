@@ -112,9 +112,6 @@ export function NewMatchModal({ onClose }: Props) {
       {picker && (
         <ArmyPickerModal
           title={picker === 'one' ? 'Ejército jugador 1' : 'Ejército jugador 2'}
-          excludeArmyID={
-            picker === 'one' ? armyTwo?.id : armyOne?.id
-          }
           onClose={() => setPicker(null)}
           onSelect={(army) => {
             if (picker === 'one') setArmyOne(army)

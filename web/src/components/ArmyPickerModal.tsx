@@ -7,17 +7,11 @@ import { SearchIcon } from './Icons'
 
 interface Props {
   title: string
-  excludeArmyID?: string
   onClose: () => void
   onSelect: (army: Army) => void
 }
 
-export function ArmyPickerModal({
-  title,
-  excludeArmyID,
-  onClose,
-  onSelect,
-}: Props) {
+export function ArmyPickerModal({ title, onClose, onSelect }: Props) {
   const armies = useArmiesStore((s) => s.armies)
   const favoriteIDs = useArmiesStore((s) => s.favoriteIDs)
   const ownedIDs = useArmiesStore((s) => s.ownedIDs)
@@ -32,11 +26,9 @@ export function ArmyPickerModal({
       .replace(/[̀-ͯ]/g, '')
       .toLowerCase()
 
-    const filtered = armies.filter((a) => {
-      if (a.id === excludeArmyID) return false
-      if (!query) return true
-      return armySearchText(a).includes(query)
-    })
+    const filtered = query
+      ? armies.filter((a) => armySearchText(a).includes(query))
+      : armies
 
     return filtered.sort((a, b) => {
       const aFav = favSet.has(a.id)
@@ -48,7 +40,7 @@ export function ArmyPickerModal({
       if (a.faction !== b.faction) return a.faction.localeCompare(b.faction)
       return a.spearheadName.localeCompare(b.spearheadName)
     })
-  }, [armies, favoriteIDs, ownedIDs, excludeArmyID, search])
+  }, [armies, favoriteIDs, ownedIDs, search])
 
   return (
     <div className="z-50">
