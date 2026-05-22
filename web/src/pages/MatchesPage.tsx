@@ -63,7 +63,9 @@ export function MatchesPage() {
       style={{ paddingTop: 'calc(env(safe-area-inset-top) + 1rem)' }}
     >
       <header className="mb-4">
-        <h1 className="text-2xl font-semibold tracking-tight">Matches</h1>
+        <div className="flex min-h-9 items-center justify-between gap-3">
+          <h1 className="text-2xl font-semibold tracking-tight">Matches</h1>
+        </div>
         <div className="mt-0.5">
           <AppVersion />
         </div>
