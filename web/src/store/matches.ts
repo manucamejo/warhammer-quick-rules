@@ -183,6 +183,34 @@ export function matchScoreTotals(match: MatchRecord): {
   )
 }
 
+export interface PlayerStats {
+  wins: number
+  draws: number
+  losses: number
+  played: number
+}
+
+export function playerStats(
+  playerID: string,
+  matches: MatchRecord[]
+): PlayerStats {
+  let wins = 0
+  let draws = 0
+  let losses = 0
+  for (const m of matches) {
+    const isP1 = m.playerOneID === playerID
+    const isP2 = m.playerTwoID === playerID
+    if (!isP1 && !isP2) continue
+    const totals = matchScoreTotals(m)
+    const my = isP1 ? totals.playerOne : totals.playerTwo
+    const opp = isP1 ? totals.playerTwo : totals.playerOne
+    if (my > opp) wins++
+    else if (my < opp) losses++
+    else draws++
+  }
+  return { wins, draws, losses, played: wins + draws + losses }
+}
+
 export function sortedMatches(matches: MatchRecord[]): MatchRecord[] {
   return [...matches].sort(
     (a, b) =>
