@@ -28,11 +28,11 @@ export default function App() {
 
 function TabBar() {
   return (
-    <div
-      className="pointer-events-none fixed inset-x-0 z-10 flex justify-center px-4"
-      style={{ bottom: 'max(env(safe-area-inset-bottom) - 0.75rem, 1rem)' }}
-    >
-      <nav className="pointer-events-auto flex w-full max-w-md items-stretch gap-1 rounded-full border border-white/10 bg-[#0f1d36]/95 p-1.5 shadow-2xl shadow-black/50 backdrop-blur-md">
+    <div className="pointer-events-none fixed inset-x-0 bottom-0 z-10 flex justify-center">
+      <nav
+        className="pointer-events-auto flex w-full max-w-md items-stretch gap-1 rounded-t-3xl border-t border-white/10 bg-[#0f1d36]/95 p-1.5 shadow-2xl shadow-black/50 backdrop-blur-md"
+        style={{ paddingBottom: 'calc(0.375rem + env(safe-area-inset-bottom))' }}
+      >
         <TabLink to="/armies" label="Armies" />
         <TabLink to="/matches" label="Matches" />
       </nav>
