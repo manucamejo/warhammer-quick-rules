@@ -35,7 +35,7 @@ export function PlayersModal({ onClose }: Props) {
   }
 
   return (
-    <Modal title="Jugadores" onClose={onClose}>
+    <Modal title="Jugadores" onClose={onClose} fullHeight>
       <div className="mb-4 flex gap-2">
         <input
           type="text"

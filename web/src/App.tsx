@@ -1,10 +1,12 @@
 import { BrowserRouter, NavLink, Navigate, Route, Routes } from 'react-router-dom'
+import { useKeyboardOpen } from './lib/useKeyboardOpen'
 import { ArmiesPage } from './pages/ArmiesPage'
 import { ArmyDetailPage } from './pages/ArmyDetailPage'
 import { MatchDetailPage } from './pages/MatchDetailPage'
 import { MatchesPage } from './pages/MatchesPage'
 
 export default function App() {
+  const keyboardOpen = useKeyboardOpen()
   return (
     <BrowserRouter>
       <div className="flex min-h-dvh flex-col bg-[#451017]">
@@ -20,7 +22,7 @@ export default function App() {
             <Route path="/matches/:id" element={<MatchDetailPage />} />
           </Routes>
         </main>
-        <TabBar />
+        {!keyboardOpen && <TabBar />}
       </div>
     </BrowserRouter>
   )
