@@ -10,7 +10,7 @@ export default function App() {
       <div className="flex h-full flex-col bg-[#451017]">
         <main
           className="flex-1 overflow-y-auto"
-          style={{ paddingBottom: 'calc(4rem + env(safe-area-inset-bottom))' }}
+          style={{ paddingBottom: 'calc(3.5rem + env(safe-area-inset-bottom))' }}
         >
           <Routes>
             <Route path="/" element={<Navigate to="/armies" replace />} />
@@ -30,7 +30,9 @@ function TabBar() {
   return (
     <nav
       className="fixed inset-x-0 bottom-0 z-10 flex items-stretch border-t border-white/10 bg-[#0f1d36]"
-      style={{ height: 'calc(3rem + env(safe-area-inset-bottom))' }}
+      style={{
+        height: 'calc(2.5rem + env(safe-area-inset-bottom))',
+      }}
     >
       <TabLink to="/armies" label="Armies" />
       <TabLink to="/matches" label="Matches" />
@@ -42,7 +44,10 @@ function TabLink({ to, label }: { to: string; label: string }) {
   return (
     <NavLink
       to={to}
-      className="group relative flex flex-1 items-center justify-center"
+      className="group relative flex flex-1 items-end justify-center"
+      style={{
+        paddingBottom: 'max(env(safe-area-inset-bottom) - 1.75rem, 0.375rem)',
+      }}
     >
       {({ isActive }) => (
         <>
@@ -53,7 +58,7 @@ function TabLink({ to, label }: { to: string; label: string }) {
             />
           )}
           <span
-            className={`text-lg font-extrabold uppercase tracking-[0.18em] transition-colors ${
+            className={`text-base font-extrabold uppercase tracking-[0.18em] transition-colors ${
               isActive ? 'text-white' : 'text-white/45'
             }`}
           >
