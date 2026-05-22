@@ -52,7 +52,7 @@ export function ArmyPickerModal({
 
   return (
     <div className="z-50">
-      <Modal title={title} onClose={onClose}>
+      <Modal title={title} onClose={onClose} fullHeight>
         <div className="relative mb-3">
           <SearchIcon
             size={16}

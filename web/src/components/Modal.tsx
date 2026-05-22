@@ -6,9 +6,10 @@ interface Props {
   onClose: () => void
   children: ReactNode
   footer?: ReactNode
+  fullHeight?: boolean
 }
 
-export function Modal({ title, onClose, children, footer }: Props) {
+export function Modal({ title, onClose, children, footer, fullHeight }: Props) {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose()
@@ -30,7 +31,9 @@ export function Modal({ title, onClose, children, footer }: Props) {
         className="relative flex w-full max-w-md flex-col overflow-hidden rounded-t-3xl border border-white/10 bg-[#1a2b4a] shadow-2xl shadow-black/50 sm:rounded-3xl"
         style={{
           paddingBottom: 'env(safe-area-inset-bottom)',
-          maxHeight: 'calc(100dvh - env(safe-area-inset-top) - 1rem)',
+          ...(fullHeight
+            ? { height: 'calc(100dvh - env(safe-area-inset-top) - 1rem)' }
+            : { maxHeight: 'calc(100dvh - env(safe-area-inset-top) - 1rem)' }),
         }}
       >
         <header className="flex items-center justify-between border-b border-white/10 px-4 py-3">
