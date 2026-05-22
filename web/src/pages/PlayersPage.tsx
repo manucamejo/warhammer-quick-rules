@@ -1,13 +1,13 @@
 import { useMemo, useState } from 'react'
-import { playerStats, useMatchesStore } from '../store/matches'
+import { AppVersion } from '../components/AppVersion'
+import {
+  headToHead,
+  playerStats,
+  useMatchesStore,
+} from '../store/matches'
 import type { PlayerProfile } from '../types'
-import { Modal } from './Modal'
 
-interface Props {
-  onClose: () => void
-}
-
-export function PlayersModal({ onClose }: Props) {
+export function PlayersPage() {
   const players = useMatchesStore((s) => s.players)
   const matches = useMatchesStore((s) => s.matches)
   const addPlayer = useMatchesStore((s) => s.addPlayer)
@@ -16,11 +16,23 @@ export function PlayersModal({ onClose }: Props) {
 
   const [newName, setNewName] = useState('')
 
+  const primary = players.find((p) => p.isPrimaryUser)
+
   const statsByID = useMemo(() => {
     const map = new Map<string, ReturnType<typeof playerStats>>()
     for (const p of players) map.set(p.id, playerStats(p.id, matches))
     return map
   }, [players, matches])
+
+  const h2hByID = useMemo(() => {
+    if (!primary) return new Map<string, ReturnType<typeof headToHead>>()
+    const map = new Map<string, ReturnType<typeof headToHead>>()
+    for (const p of players) {
+      if (p.id === primary.id) continue
+      map.set(p.id, headToHead(primary.id, p.id, matches))
+    }
+    return map
+  }, [players, matches, primary])
 
   const handleAdd = () => {
     const trimmed = newName.trim()
@@ -41,7 +53,21 @@ export function PlayersModal({ onClose }: Props) {
   }
 
   return (
-    <Modal title="Jugadores" onClose={onClose} fullHeight>
+    <div
+      className="mx-auto max-w-2xl px-4"
+      style={{ paddingTop: 'calc(env(safe-area-inset-top) + 1rem)' }}
+    >
+      <header className="mb-4">
+        <div className="flex min-h-9 items-center justify-between gap-3">
+          <h1 className="text-2xl font-semibold tracking-tight">
+            Warhammer Quick Rules
+          </h1>
+        </div>
+        <div className="mt-0.5">
+          <AppVersion />
+        </div>
+      </header>
+
       <div className="mb-4 flex gap-2">
         <input
           type="text"
@@ -50,7 +76,7 @@ export function PlayersModal({ onClose }: Props) {
           onKeyDown={(e) => {
             if (e.key === 'Enter') handleAdd()
           }}
-          placeholder="Nombre"
+          placeholder="Nuevo jugador"
           className="flex-1 rounded-xl border border-white/10 bg-white/8 px-3 py-2.5 text-sm text-white placeholder:text-white/45 focus:border-white/30 focus:outline-none"
         />
         <button
@@ -64,30 +90,27 @@ export function PlayersModal({ onClose }: Props) {
       </div>
 
       {players.length === 0 ? (
-        <p className="py-4 text-center text-sm text-white/55">
+        <p className="py-8 text-center text-sm text-white/55">
           No hay jugadores todavía.
         </p>
       ) : (
-        <ul className="flex flex-col gap-2">
+        <ul className="flex flex-col gap-3">
           {players.map((p) => {
-            const s = statsByID.get(p.id) ?? {
-              wins: 0,
-              draws: 0,
-              losses: 0,
-              played: 0,
-            }
+            const s = statsByID.get(p.id)
+            const h2h = h2hByID.get(p.id)
+            const isPrimary = p.isPrimaryUser
             return (
               <li
                 key={p.id}
-                className="flex flex-col gap-2 rounded-2xl border border-white/10 bg-white/4 px-3 py-2.5"
+                className="rounded-2xl border border-white/10 bg-[#1a2b4a] p-4"
               >
                 <div className="flex items-center gap-2">
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-semibold text-white">
+                    <p className="truncate text-base font-semibold text-white">
                       {p.name}
                     </p>
                   </div>
-                  {p.isPrimaryUser ? (
+                  {isPrimary ? (
                     <span className="rounded-full bg-amber-500/20 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-amber-300">
                       You
                     </span>
@@ -108,20 +131,59 @@ export function PlayersModal({ onClose }: Props) {
                     Delete
                   </button>
                 </div>
-                <div className="flex items-center gap-3 text-[11px] font-semibold tabular-nums">
-                  <StatChip label="G" value={s.wins} tone="win" />
-                  <StatChip label="E" value={s.draws} tone="draw" />
-                  <StatChip label="P" value={s.losses} tone="loss" />
-                  <span className="ml-auto text-white/45">
-                    {s.played} {s.played === 1 ? 'partida' : 'partidas'}
-                  </span>
-                </div>
+
+                {s && (
+                  <div className="mt-3">
+                    <p className="mb-1.5 text-[10px] font-bold uppercase tracking-wider text-white/45">
+                      Total
+                    </p>
+                    <StatsRow stats={s} />
+                  </div>
+                )}
+
+                {!isPrimary && h2h && primary && h2h.played > 0 && (
+                  <div className="mt-3 rounded-xl bg-white/4 p-3">
+                    <p className="mb-1.5 text-[10px] font-bold uppercase tracking-wider text-white/45">
+                      Contra {primary.name}
+                    </p>
+                    <StatsRow stats={h2h} primaryName={primary.name} otherName={p.name} />
+                  </div>
+                )}
+
+                {!isPrimary && h2h && primary && h2h.played === 0 && (
+                  <p className="mt-3 text-xs text-white/45">
+                    Sin partidas contra {primary.name}.
+                  </p>
+                )}
               </li>
             )
           })}
         </ul>
       )}
-    </Modal>
+    </div>
+  )
+}
+
+function StatsRow({
+  stats,
+  primaryName,
+  otherName,
+}: {
+  stats: ReturnType<typeof playerStats>
+  primaryName?: string
+  otherName?: string
+}) {
+  return (
+    <div className="flex items-center gap-2 text-xs font-semibold tabular-nums">
+      <StatChip label="G" value={stats.wins} tone="win" />
+      <StatChip label="E" value={stats.draws} tone="draw" />
+      <StatChip label="P" value={stats.losses} tone="loss" />
+      <span className="ml-auto text-[11px] text-white/45">
+        {primaryName && otherName
+          ? `desde ${primaryName}`
+          : `${stats.played} ${stats.played === 1 ? 'partida' : 'partidas'}`}
+      </span>
+    </div>
   )
 }
 

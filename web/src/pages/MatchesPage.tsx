@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { AppVersion } from '../components/AppVersion'
 import { NewMatchModal } from '../components/NewMatchModal'
-import { PlayersModal } from '../components/PlayersModal'
 import { useArmiesStore } from '../store/armies'
 import {
   matchScoreTotals,
@@ -18,7 +17,6 @@ export function MatchesPage() {
   const armies = useArmiesStore((s) => s.armies)
   const loadArmies = useArmiesStore((s) => s.loadArmies)
 
-  const [showPlayers, setShowPlayers] = useState(false)
   const [showNewMatch, setShowNewMatch] = useState(false)
 
   useEffect(() => {
@@ -52,13 +50,6 @@ export function MatchesPage() {
       <header className="mb-4">
         <div className="flex min-h-9 items-center justify-between gap-3">
           <h1 className="text-2xl font-semibold tracking-tight">Warhammer Quick Rules</h1>
-          <button
-            type="button"
-            onClick={() => setShowPlayers(true)}
-            className="rounded-full bg-white/8 px-3 py-1.5 text-xs font-semibold text-white/85 hover:bg-white/12"
-          >
-            Players ({players.length})
-          </button>
         </div>
         <div className="mt-0.5">
           <AppVersion />
@@ -81,7 +72,7 @@ export function MatchesPage() {
         />
         {players.length < 2 && (
           <EmptyHint>
-            Agregá al menos 2 jugadores desde el botón Players para empezar una partida.
+            Agregá al menos 2 jugadores en la pestaña Players para empezar una partida.
           </EmptyHint>
         )}
         {orderedMatches.length === 0 && players.length >= 2 && (
@@ -100,9 +91,6 @@ export function MatchesPage() {
         </ul>
       </section>
 
-      {showPlayers && (
-        <PlayersModal onClose={() => setShowPlayers(false)} />
-      )}
       {showNewMatch && (
         <NewMatchModal onClose={() => setShowNewMatch(false)} />
       )}

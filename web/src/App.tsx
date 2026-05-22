@@ -4,6 +4,7 @@ import { ArmiesPage } from './pages/ArmiesPage'
 import { ArmyDetailPage } from './pages/ArmyDetailPage'
 import { MatchDetailPage } from './pages/MatchDetailPage'
 import { MatchesPage } from './pages/MatchesPage'
+import { PlayersPage } from './pages/PlayersPage'
 
 export default function App() {
   const keyboardOpen = useKeyboardOpen()
@@ -20,6 +21,7 @@ export default function App() {
             <Route path="/armies/:id" element={<ArmyDetailPage />} />
             <Route path="/matches" element={<MatchesPage />} />
             <Route path="/matches/:id" element={<MatchDetailPage />} />
+            <Route path="/players" element={<PlayersPage />} />
           </Routes>
         </main>
         {!keyboardOpen && <TabBar />}
@@ -36,6 +38,7 @@ function TabBar() {
     >
       <TabLink to="/armies" label="Armies" />
       <TabLink to="/matches" label="Matches" />
+      <TabLink to="/players" label="Players" />
     </nav>
   )
 }

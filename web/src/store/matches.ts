@@ -211,6 +211,29 @@ export function playerStats(
   return { wins, draws, losses, played: wins + draws + losses }
 }
 
+export function headToHead(
+  playerA: string,
+  playerB: string,
+  matches: MatchRecord[]
+): PlayerStats {
+  let wins = 0
+  let draws = 0
+  let losses = 0
+  for (const m of matches) {
+    const involvesA = m.playerOneID === playerA || m.playerTwoID === playerA
+    const involvesB = m.playerOneID === playerB || m.playerTwoID === playerB
+    if (!involvesA || !involvesB) continue
+    const totals = matchScoreTotals(m)
+    const aIsP1 = m.playerOneID === playerA
+    const aPoints = aIsP1 ? totals.playerOne : totals.playerTwo
+    const bPoints = aIsP1 ? totals.playerTwo : totals.playerOne
+    if (aPoints > bPoints) wins++
+    else if (aPoints < bPoints) losses++
+    else draws++
+  }
+  return { wins, draws, losses, played: wins + draws + losses }
+}
+
 export function sortedMatches(matches: MatchRecord[]): MatchRecord[] {
   return [...matches].sort(
     (a, b) =>
