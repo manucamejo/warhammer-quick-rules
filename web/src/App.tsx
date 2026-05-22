@@ -29,10 +29,8 @@ export default function App() {
 function TabBar() {
   return (
     <nav
-      className="fixed inset-x-0 bottom-0 z-10 flex items-stretch border-t border-white/10 bg-[#0f1d36]"
-      style={{
-        height: 'calc(2.5rem + env(safe-area-inset-bottom))',
-      }}
+      className="fixed inset-x-0 z-10 flex h-12 items-stretch border-t border-white/10 bg-[#0f1d36]"
+      style={{ bottom: 'env(safe-area-inset-bottom)' }}
     >
       <TabLink to="/armies" label="Armies" />
       <TabLink to="/matches" label="Matches" />
@@ -44,10 +42,7 @@ function TabLink({ to, label }: { to: string; label: string }) {
   return (
     <NavLink
       to={to}
-      className="group relative flex flex-1 items-end justify-center"
-      style={{
-        paddingBottom: 'max(env(safe-area-inset-bottom) - 1.75rem, 0.375rem)',
-      }}
+      className="group relative flex flex-1 items-center justify-center"
     >
       {({ isActive }) => (
         <>
