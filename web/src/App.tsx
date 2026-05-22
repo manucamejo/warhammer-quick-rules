@@ -7,7 +7,7 @@ import { MatchesPage } from './pages/MatchesPage'
 export default function App() {
   return (
     <BrowserRouter>
-      <div className="flex h-full flex-col bg-[#451017]">
+      <div className="flex min-h-dvh flex-col bg-[#451017]">
         <main
           className="flex-1 overflow-y-auto"
           style={{ paddingBottom: 'calc(5rem + env(safe-area-inset-bottom))' }}
