@@ -10,7 +10,7 @@ export default function App() {
       <div className="flex h-full flex-col bg-[#451017]">
         <main
           className="flex-1 overflow-y-auto"
-          style={{ paddingBottom: 'calc(5rem + env(safe-area-inset-bottom))' }}
+          style={{ paddingBottom: 'calc(4rem + env(safe-area-inset-bottom))' }}
         >
           <Routes>
             <Route path="/" element={<Navigate to="/armies" replace />} />
@@ -30,7 +30,7 @@ function TabBar() {
   return (
     <nav
       className="fixed inset-x-0 bottom-0 z-10 flex items-stretch border-t border-white/10 bg-[#0f1d36]"
-      style={{ height: 'calc(4rem + env(safe-area-inset-bottom))' }}
+      style={{ height: 'calc(3rem + env(safe-area-inset-bottom))' }}
     >
       <TabLink to="/armies" label="Armies" />
       <TabLink to="/matches" label="Matches" />
@@ -42,10 +42,7 @@ function TabLink({ to, label }: { to: string; label: string }) {
   return (
     <NavLink
       to={to}
-      className="group relative flex flex-1 items-end justify-center"
-      style={{
-        paddingBottom: 'max(env(safe-area-inset-bottom) - 0.75rem, 0.875rem)',
-      }}
+      className="group relative flex flex-1 items-center justify-center"
     >
       {({ isActive }) => (
         <>

@@ -27,9 +27,10 @@ export function Modal({ title, onClose, children, footer }: Props) {
         role="dialog"
         aria-modal="true"
         aria-label={title}
-        className="relative flex max-h-[90vh] w-full max-w-md flex-col overflow-hidden rounded-t-3xl border border-white/10 bg-[#1a2b4a] shadow-2xl shadow-black/50 sm:rounded-3xl"
+        className="relative flex w-full max-w-md flex-col overflow-hidden rounded-t-3xl border border-white/10 bg-[#1a2b4a] shadow-2xl shadow-black/50 sm:rounded-3xl"
         style={{
           paddingBottom: 'env(safe-area-inset-bottom)',
+          maxHeight: 'calc(100dvh - env(safe-area-inset-top) - 1rem)',
         }}
       >
         <header className="flex items-center justify-between border-b border-white/10 px-4 py-3">
