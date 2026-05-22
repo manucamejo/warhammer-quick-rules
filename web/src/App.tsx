@@ -28,10 +28,7 @@ function TabBar() {
   return (
     <nav
       className="fixed inset-x-0 bottom-0 z-10 flex items-stretch border-t border-white/10 bg-[#0f1d36]"
-      style={{
-        height: 'calc(4rem + env(safe-area-inset-bottom))',
-        paddingBottom: 'max(env(safe-area-inset-bottom) - 1.25rem, 0.25rem)',
-      }}
+      style={{ height: 'calc(4rem + env(safe-area-inset-bottom))' }}
     >
       <TabLink to="/armies" label="Armies" />
       <TabLink to="/matches" label="Matches" />
@@ -43,7 +40,10 @@ function TabLink({ to, label }: { to: string; label: string }) {
   return (
     <NavLink
       to={to}
-      className="group relative flex flex-1 items-center justify-center"
+      className="group relative flex flex-1 items-end justify-center"
+      style={{
+        paddingBottom: 'max(env(safe-area-inset-bottom) - 0.75rem, 0.875rem)',
+      }}
     >
       {({ isActive }) => (
         <>
