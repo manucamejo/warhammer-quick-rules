@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { AppVersion } from '../components/AppVersion'
-import { NewPlayerModal } from '../components/NewPlayerModal'
 import { NewMatchModal } from '../components/NewMatchModal'
+import { PlayersModal } from '../components/PlayersModal'
 import { useArmiesStore } from '../store/armies'
 import {
   matchScoreTotals,
@@ -15,12 +15,10 @@ export function MatchesPage() {
   const players = useMatchesStore((s) => s.players)
   const matches = useMatchesStore((s) => s.matches)
   const deleteMatch = useMatchesStore((s) => s.deleteMatch)
-  const removePlayer = useMatchesStore((s) => s.removePlayer)
-  const setPrimaryPlayer = useMatchesStore((s) => s.setPrimaryPlayer)
   const armies = useArmiesStore((s) => s.armies)
   const loadArmies = useArmiesStore((s) => s.loadArmies)
 
-  const [showNewPlayer, setShowNewPlayer] = useState(false)
+  const [showPlayers, setShowPlayers] = useState(false)
   const [showNewMatch, setShowNewMatch] = useState(false)
 
   useEffect(() => {
@@ -41,17 +39,6 @@ export function MatchesPage() {
 
   const orderedMatches = useMemo(() => sortedMatches(matches), [matches])
 
-  const handleDeletePlayer = (player: PlayerProfile) => {
-    const used = matches.some(
-      (m) => m.playerOneID === player.id || m.playerTwoID === player.id
-    )
-    const msg = used
-      ? `${player.name} está en partidas existentes. ¿Eliminar igual?`
-      : `¿Eliminar a ${player.name}?`
-    if (!window.confirm(msg)) return
-    removePlayer(player.id)
-  }
-
   const handleDeleteMatch = (match: MatchRecord) => {
     if (!window.confirm('¿Eliminar esta partida?')) return
     deleteMatch(match.id)
@@ -65,62 +52,18 @@ export function MatchesPage() {
       <header className="mb-4">
         <div className="flex min-h-9 items-center justify-between gap-3">
           <h1 className="text-2xl font-semibold tracking-tight">Matches</h1>
+          <button
+            type="button"
+            onClick={() => setShowPlayers(true)}
+            className="rounded-full bg-white/8 px-3 py-1.5 text-xs font-semibold text-white/85 hover:bg-white/12"
+          >
+            Players ({players.length})
+          </button>
         </div>
         <div className="mt-0.5">
           <AppVersion />
         </div>
       </header>
-
-      <section className="mb-6">
-        <SectionHeader
-          title="Players"
-          action={
-            <button
-              type="button"
-              onClick={() => setShowNewPlayer(true)}
-              className="rounded-full bg-amber-500/20 px-3 py-1 text-xs font-semibold text-amber-300 hover:bg-amber-500/30"
-            >
-              + Add Player
-            </button>
-          }
-        />
-        {players.length === 0 ? (
-          <EmptyHint>No hay jugadores todavía.</EmptyHint>
-        ) : (
-          <ul className="flex flex-col gap-2">
-            {players.map((p) => (
-              <li
-                key={p.id}
-                className="flex items-center gap-2 rounded-2xl border border-white/10 bg-[#1a2b4a] px-4 py-3"
-              >
-                <div className="flex-1">
-                  <p className="text-sm font-semibold text-white">{p.name}</p>
-                </div>
-                {p.isPrimaryUser ? (
-                  <span className="rounded-full bg-amber-500/20 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-amber-300">
-                    You
-                  </span>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={() => setPrimaryPlayer(p.id)}
-                    className="rounded-full bg-white/8 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-white/70 hover:bg-white/12"
-                  >
-                    Make You
-                  </button>
-                )}
-                <button
-                  type="button"
-                  onClick={() => handleDeletePlayer(p)}
-                  className="rounded-full bg-white/8 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-white/70 hover:bg-red-500/20 hover:text-red-300"
-                >
-                  Delete
-                </button>
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
 
       <section>
         <SectionHeader
@@ -138,7 +81,7 @@ export function MatchesPage() {
         />
         {players.length < 2 && (
           <EmptyHint>
-            Agregá al menos 2 jugadores para empezar una partida.
+            Agregá al menos 2 jugadores desde el botón Players para empezar una partida.
           </EmptyHint>
         )}
         {orderedMatches.length === 0 && players.length >= 2 && (
@@ -157,8 +100,8 @@ export function MatchesPage() {
         </ul>
       </section>
 
-      {showNewPlayer && (
-        <NewPlayerModal onClose={() => setShowNewPlayer(false)} />
+      {showPlayers && (
+        <PlayersModal onClose={() => setShowPlayers(false)} />
       )}
       {showNewMatch && (
         <NewMatchModal onClose={() => setShowNewMatch(false)} />
