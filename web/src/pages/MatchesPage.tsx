@@ -51,7 +51,7 @@ export function MatchesPage() {
     >
       <header className="mb-4">
         <div className="flex min-h-9 items-center justify-between gap-3">
-          <h1 className="text-2xl font-semibold tracking-tight">Matches</h1>
+          <h1 className="text-2xl font-semibold tracking-tight">Warhammer Quick Rules</h1>
           <button
             type="button"
             onClick={() => setShowPlayers(true)}

@@ -34,7 +34,7 @@ export function ArmiesPage() {
     >
       <header className="mb-4">
         <div className="flex items-center justify-between gap-3">
-          <h1 className="text-2xl font-semibold tracking-tight">Warhammer</h1>
+          <h1 className="text-2xl font-semibold tracking-tight">Warhammer Quick Rules</h1>
           <div className="flex items-center gap-2">
             <span className="text-sm font-semibold text-white/65">
               {armies.length}
