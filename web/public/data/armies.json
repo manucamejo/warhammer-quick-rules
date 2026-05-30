@@ -91,8 +91,8 @@
     "details": "GENERAL\n 1x Pontifex Zenestra\n\n UNITS\n 1x Freeguild Marshal and Relic Envoy\n 6x Freeguild Command Corps\n 10x Freeguild Steelhelms",
     "quickRulesFileName": null,
     "thumbnailImageName": "cities-of-sigmar-zenestra-s-zealots.jpg",
-    "quickRulesImageName": null,
-    "officialPDFURL": null,
+    "quickRulesImageName": "cities-of-sigmar-zenestra-s-zealots.jpg",
+    "officialPDFURL": "https://assets.warhammer-community.com/eng_13-05_aos_spearhead_cities_of_sigmar_zenestra-s_zealots-jiv98kvc9n-nhjktzu4pc.pdf",
     "imageURL": null
   },
   {
@@ -459,8 +459,8 @@
     "details": "GENERAL\r\n 1x Tyrant\n\r\n UNITS\r\n 2x Mournfang Pack\r\n 3x Ogor Gluttons\r\n 3x Ogor Gluttons\r\n 4x Leadbelchers\r\n 1x Ironblaster",
     "quickRulesFileName": "Ogor Mawtribes - Tyrant's Bellow.png",
     "thumbnailImageName": "ogor-mawtribes-tyrant-s-bellow.jpg",
-    "quickRulesImageName": null,
-    "officialPDFURL": null,
+    "quickRulesImageName": "ogor-mawtribes-tyrant-s-bellow.jpg",
+    "officialPDFURL": "https://assets.warhammer-community.com/eng_aos_spearhead_ogor_tyrant-s_bellow-2x4dua4hul-ybq3296fth.pdf",
     "imageURL": null
   },
   {
@@ -539,7 +539,7 @@
     "details": "GENERAL\n 1x Liege-Kavalos\n\n UNITS\n 5x Kavalos Deathriders\n 5x Kavalos Deathriders\n 8x Teratic Cohort Warband (Reinforced)",
     "quickRulesFileName": null,
     "thumbnailImageName": "ossiarch-bonereapers-kavalos-vanguard.jpg",
-    "quickRulesImageName": null,
+    "quickRulesImageName": "ossiarch-bonereapers-kavalos-vanguard.jpg",
     "officialPDFURL": "https://assets.warhammer-community.com/eng_18-02_aos_spearhead_ossiarch_bonereapers_kavalos_vanguard-jbqptot5r8-wv7o91pzot.pdf",
     "imageURL": null
   },
